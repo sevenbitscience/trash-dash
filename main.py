@@ -7,6 +7,10 @@ def check_collision(a_x, a_y, a_width, a_height, b_x, b_y, b_width, b_height):
     return (a_x + a_width > b_x) and (a_x < b_x + b_width) and (a_y + a_height > b_y) and (a_y < b_y + b_height)
 
 
+def check_collision_list(a, b):
+    return (a[0] + a[2] > b[0]) and (a[0] < b[0] + b[2]) and (a[1] + a[3] > b[1]) and (a[1] < b[1] + b[3])
+
+
 def main():
     # start pygame
 
@@ -29,6 +33,8 @@ def main():
     trash_text = score_font.render(str(0), True, score_color)
     score_text = score_font.render(str(0), True, score_color)
     score_holder = pygame.Rect(10, 550, 500, 80)
+    barriers = [(0, 0, 320, 200), (100, 200, 70, 130)]
+    shop_hitbox = (100, 230, 70, 70)
 
     # Load assets for the atm
     sell_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 40)
@@ -37,24 +43,29 @@ def main():
     sell_button = (383, 445, 542, 80)
     sell_rect = pygame.Rect(sell_button)
 
+    # Load assets for inside
+    upgrades_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 20)
+    upgrade_text_color = (36, 36, 36)
+    start_button = (980, 480, 200, 60)
+    start_text = upgrades_font.render("Next day", True, upgrade_text_color)
+
     # Load sound effects
     collect_sound = pygame.mixer.Sound("sfx/pickup.wav")
     miss_sound = pygame.mixer.Sound("sfx/miss.wav")
     select_sound = pygame.mixer.Sound("sfx/select.wav")
     coin_sound = pygame.mixer.Sound("sfx/coin.wav")
     full_sound = pygame.mixer.Sound("sfx/full.wav")
-
     master_volume = 0.5
 
-    barriers = [(0, 0, 320, 200), (100, 200, 70, 130)]
-    shop_hitbox = (100, 230, 70, 70)
-
-    # Setup vars for collecting trash
+    # Setup vars for in game stuff
     trash_collected = 0
     prev_trash = 0
     balance = 0
     trash_price = 5
     backpack = 10
+
+    sell_time = 5
+    sell_frames = 120
 
     # Setup timer
     start_ticks = pygame.time.get_ticks()
@@ -69,17 +80,15 @@ def main():
     # start the player
     dino = Player()
 
-    # Spawn trash initially
+    # create trash pieces
     trash_pieces = []
+
     for i in range(20):
         trash_pieces.append(Trash())
 
-    for trash in trash_pieces:
-        trash.fall(screen.get_height())
-
     # bools for what menu to be in
     shop_open = False
-    running = True
+    running = False
 
     # main loop
     while True:
@@ -87,7 +96,7 @@ def main():
             collect_sound.set_volume(master_volume)
             miss_sound.set_volume(master_volume/1.5)
             select_sound.set_volume(master_volume)
-            full_sound.set_volume(master_volume/2)
+            full_sound.set_volume(master_volume/1.5)
             touching_trash = False
             seconds = int(((pygame.time.get_ticks() - start_ticks) / 1000))
             if last_seconds != seconds:
@@ -182,7 +191,7 @@ def main():
                 if interact:
                     if touching_trash and trash_collected < backpack:
                         collect_sound.play((trash_collected-prev_trash)-1)
-                    elif touching_trash and trash_collected >= backpack-1:
+                    elif touching_trash and trash_collected >= backpack:
                         full_sound.play()
                     elif not touching_trash:
                         miss_sound.play()
@@ -201,13 +210,10 @@ def main():
                 prev_trash = trash_collected
 
             if shop_open:
-                sell_time = 5
-                sell_frames = 120
                 sell_frame_delay = sell_time * 1000 / sell_frames
                 if trash_collected > 0:
-                    coin_delay = sell_frames/trash_collected
+                    coin_delay = (sell_frames - 5)/trash_collected
                     last_coin_frame = 0
-                    print(coin_delay)
                 else:
                     coin_delay = sell_frames + 1
                     last_coin_frame = sell_frames + 1
@@ -229,8 +235,6 @@ def main():
                             last_coin_frame = i
                         pygame.display.update()
                         pygame.time.delay(int(sell_frame_delay))
-                    if trash_collected > 0 and trash_collected != 7:
-                        coin_sound.play()
 
                     screen.blit(atm, (0, 0))
                     pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
@@ -244,26 +248,76 @@ def main():
                     shop_open = False
 
             pygame.display.update()
-        balance += trash_collected * trash_price
-        score_text = score_font.render(str(balance), True, score_color)
+        if trash_collected > 0:
+            sell_frame_delay = sell_time * 1000 / sell_frames
+            coin_delay = (sell_frames - 5) / trash_collected
+            last_coin_frame = 0
+            for i in range(sell_frames):
+                sell_width = sell_button[2] - i * sell_button[2] / sell_frames
+                screen.blit(atm, (0, 0))
+                pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
+                pygame.draw.rect(screen, sell_button_color, (sell_button[0], sell_button[1], int(sell_width),
+                                                             sell_button[3]), 0, 10)
+                screen.blit(sell_text, (570, 465))
+                if int(last_coin_frame + coin_delay) == i:
+                    coin_sound.play()
+                    last_coin_frame = i
+                pygame.display.update()
+                pygame.time.delay(int(sell_frame_delay))
+
+            screen.blit(atm, (0, 0))
+            pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
+            screen.blit(sell_text, (570, 465))
+            pygame.display.update()
+            pygame.time.delay(500)
+            balance += trash_collected * trash_price
+            trash_collected = 0
+            score_text = score_font.render(str(balance), True, score_color)
+            trash_text = score_font.render(str(trash_collected), True, score_color)
+
         while not running:
+            select_sound.set_volume(master_volume)
+            select = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    select = True
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                    select_sound.play()
                     running = True
                     start_ticks = pygame.time.get_ticks()
                     last_seconds = -1
+                    total_time = 40
                     time_left = total_time
-                    timer_width = 300
+                    timer_width = 490
                     timer_step = timer_width / time_left
                     timer_rect = [540, 562, timer_width, 55]
-                    timer_color = [0, 255, 0]
                     trash_collected = 0
                     trash_text = score_font.render(str(trash_collected), True, score_color)
                     for trash in trash_pieces:
                         trash.__init__()
+
+            if select:
+                mouse_pos = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], 3, 3)
+                if check_collision_list(mouse_pos, start_button):
+                    select_sound.play()
+                    running = True
+                    start_ticks = pygame.time.get_ticks()
+                    last_seconds = -1
+                    total_time = 40
+                    time_left = total_time
+                    timer_width = 490
+                    timer_step = timer_width / time_left
+                    timer_rect = [540, 562, timer_width, 55]
+                    trash_collected = 0
+                    trash_text = score_font.render(str(trash_collected), True, score_color)
+                    for trash in trash_pieces:
+                        trash.__init__()
+
             pygame.draw.rect(screen, (0, 0, 0), (0, 0, screen.get_width(), screen.get_height()))
+            pygame.draw.rect(screen, (13, 219, 67), start_button, 0, 20)
+            screen.blit(start_text, (1000, 500))
             pygame.display.update()
 
 
