@@ -10,8 +10,6 @@ def check_collision(a_x, a_y, a_width, a_height, b_x, b_y, b_width, b_height):
 def main():
     pygame.init()
 
-    playing = True
-
     screen = pygame.display.set_mode((1280, 640))
     pygame.display.set_caption("Trash dash")
     house = pygame.image.load("gfx/house.png")
@@ -28,6 +26,9 @@ def main():
     trash_text = score_font.render(str(0), True, score_color)
     score_text = score_font.render(str(0), True, score_color)
     score_holder = pygame.Rect(10, 550, 500, 80)
+    sell_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 40)
+    sell_text = sell_font.render("Sell", True, (235, 235, 235))
+    sell_button_color = (71, 145, 64)
 
     collect_sound = pygame.mixer.Sound("sfx/pickup.wav")
     miss_sound = pygame.mixer.Sound("sfx/miss.wav")
@@ -51,7 +52,7 @@ def main():
 
     start_ticks = pygame.time.get_ticks()
     last_seconds = -1
-    total_time = 60
+    total_time = 40
     time_left = total_time
     timer_width = 490
     timer_step = timer_width / time_left
@@ -86,11 +87,11 @@ def main():
                 timer_rect[2] = timer_width - (timer_step * (total_time - time_left))
 
             if time_left >= 30:
-                timer_color = [0, 255, 0]
+                timer_color = [103, 219, 53]
             elif 15 < time_left < 30:
-                timer_color = [255, 255, 0]
+                timer_color = [245, 197, 39]
             elif 0 < time_left < 15:
-                timer_color = [255, 0, 0]
+                timer_color = [184, 44, 22]
             elif time_left <= 0:
                 running = False
 
@@ -201,7 +202,8 @@ def main():
                     coin_delay = sell_frames + 1
                     last_coin_frame = sell_frames + 1
                 screen.blit(atm, (0, 0))
-                pygame.draw.rect(screen, (0, 255, 0), sell_rect, 0, 10)
+                pygame.draw.rect(screen, sell_button_color, sell_rect, 0, 10)
+                screen.blit(sell_text, (570, 465))
                 if check_collision(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], 3, 3, sell_button[0],
                                    sell_button[1], sell_button[2], sell_button[3]) and select:
                     select_sound.play()
@@ -209,19 +211,20 @@ def main():
                         sell_width = sell_button[2]-i*sell_button[2]/sell_frames
                         screen.blit(atm, (0, 0))
                         pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
-                        pygame.draw.rect(screen, (0, 255, 0), (sell_button[0], sell_button[1], int(sell_width),
+                        pygame.draw.rect(screen, sell_button_color, (sell_button[0], sell_button[1], int(sell_width),
                                                                sell_button[3]), 0, 10)
+                        screen.blit(sell_text, (570, 465))
                         if int(last_coin_frame + coin_delay) == i:
                             coin_sound.play()
                             last_coin_frame = i
                         pygame.display.update()
                         pygame.time.delay(int(sell_frame_delay))
-
                     if trash_collected > 0 and trash_collected != 7:
                         coin_sound.play()
 
                     screen.blit(atm, (0, 0))
                     pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
+                    screen.blit(sell_text, (570, 465))
                     pygame.display.update()
                     pygame.time.delay(500)
                     balance += trash_collected * trash_price
