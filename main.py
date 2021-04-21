@@ -8,13 +8,16 @@ def check_collision(a_x, a_y, a_width, a_height, b_x, b_y, b_width, b_height):
 
 
 def main():
-    pygame.init()
+    # start pygame
 
+    pygame.init()
     screen = pygame.display.set_mode((1280, 640))
     pygame.display.set_caption("Trash dash")
+
+    # Load assets for outside
     house = pygame.image.load("gfx/house.png")
     house = pygame.transform.scale(house, (1280, 640))
-    atm = pygame.image.load("gfx/atm.png")
+    atm = pygame.image.load("gfx/atm-2.png")
     atm = pygame.transform.scale(atm, (1280, 640))
     trash_pile = pygame.image.load("gfx/soda.png")
     hud_icon_size = 60
@@ -26,10 +29,15 @@ def main():
     trash_text = score_font.render(str(0), True, score_color)
     score_text = score_font.render(str(0), True, score_color)
     score_holder = pygame.Rect(10, 550, 500, 80)
+
+    # Load assets for the atm
     sell_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 40)
     sell_text = sell_font.render("Sell", True, (235, 235, 235))
     sell_button_color = (71, 145, 64)
+    sell_button = (383, 445, 542, 80)
+    sell_rect = pygame.Rect(sell_button)
 
+    # Load sound effects
     collect_sound = pygame.mixer.Sound("sfx/pickup.wav")
     miss_sound = pygame.mixer.Sound("sfx/miss.wav")
     select_sound = pygame.mixer.Sound("sfx/select.wav")
@@ -38,18 +46,17 @@ def main():
 
     master_volume = 0.5
 
-    sell_button = (383, 445, 542, 80)
-    sell_rect = pygame.Rect(sell_button)
-
     barriers = [(0, 0, 320, 200), (100, 200, 70, 130)]
     shop_hitbox = (100, 230, 70, 70)
 
+    # Setup vars for collecting trash
     trash_collected = 0
     prev_trash = 0
     balance = 0
     trash_price = 5
     backpack = 10
 
+    # Setup timer
     start_ticks = pygame.time.get_ticks()
     last_seconds = -1
     total_time = 40
@@ -59,8 +66,10 @@ def main():
     timer_rect = [540, 562, timer_width, 55]
     timer_color = [0, 255, 0]
 
+    # start the player
     dino = Player()
 
+    # Spawn trash initially
     trash_pieces = []
     for i in range(20):
         trash_pieces.append(Trash())
@@ -68,6 +77,7 @@ def main():
     for trash in trash_pieces:
         trash.fall(screen.get_height())
 
+    # bools for what menu to be in
     shop_open = False
     running = True
 
@@ -212,7 +222,7 @@ def main():
                         screen.blit(atm, (0, 0))
                         pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
                         pygame.draw.rect(screen, sell_button_color, (sell_button[0], sell_button[1], int(sell_width),
-                                                               sell_button[3]), 0, 10)
+                                                                     sell_button[3]), 0, 10)
                         screen.blit(sell_text, (570, 465))
                         if int(last_coin_frame + coin_delay) == i:
                             coin_sound.play()
