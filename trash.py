@@ -3,7 +3,8 @@ import random
 
 
 class Trash:
-    trashSprites = [pygame.image.load("appleCore.png"), pygame.image.load("soda.png"), pygame.image.load("dino.png"), pygame.image.load("coin.png")]
+    trashSprites = [pygame.image.load("gfx/appleCore.png"), pygame.image.load("gfx/soda.png"), pygame.image.load(
+        "gfx/dino.png"), pygame.image.load("gfx/coin.png")]
 
     def __init__(self):
         self.size = random.randrange(20, 30)
