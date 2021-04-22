@@ -21,7 +21,7 @@ def main():
     # Load assets for outside
     house = pygame.image.load("gfx/house.png")
     house = pygame.transform.scale(house, (1280, 640))
-    atm = pygame.image.load("gfx/atm-2.png")
+    atm = pygame.image.load("gfx/atm.png")
     atm = pygame.transform.scale(atm, (1280, 640))
     trash_pile = pygame.image.load("gfx/soda.png")
     hud_icon_size = 60
@@ -46,8 +46,12 @@ def main():
     # Load assets for inside
     upgrades_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 20)
     upgrade_text_color = (36, 36, 36)
-    start_button = (980, 480, 200, 60)
+    start_button = (985, 435, 205, 90)
     start_text = upgrades_font.render("Next day", True, upgrade_text_color)
+    quit_button = (985, 320, 205, 90)
+    quit_text = upgrades_font.render("Quit", True, (181, 23, 2))
+    inside = pygame.image.load("gfx/inside.png")
+    inside = pygame.transform.scale(inside, (1280, 640))
 
     # Load sound effects
     collect_sound = pygame.mixer.Sound("sfx/pickup.wav")
@@ -79,6 +83,10 @@ def main():
 
     # start the player
     dino = Player()
+    left = False
+
+    last_time = start_ticks
+    animation_fps = 100
 
     # create trash pieces
     trash_pieces = []
@@ -98,7 +106,8 @@ def main():
             select_sound.set_volume(master_volume)
             full_sound.set_volume(master_volume/1.5)
             touching_trash = False
-            seconds = int(((pygame.time.get_ticks() - start_ticks) / 1000))
+            current_ticks = pygame.time.get_ticks()
+            seconds = int(((current_ticks - start_ticks) / 1000))
             if last_seconds != seconds:
                 time_left -= seconds - last_seconds
                 print(time_left)
@@ -139,9 +148,11 @@ def main():
                 if pressed[pygame.K_a]:
                     dino.velocity.x = -dino.speed
                     dino.currentSprite = dino.leftSprite
+                    left = True
                 if pressed[pygame.K_d]:
                     dino.velocity.x = dino.speed
                     dino.currentSprite = dino.rightSprite
+                    left = False
                 if pressed[pygame.K_w]:
                     dino.velocity.y = -dino.speed
                 if pressed[pygame.K_s]:
@@ -153,6 +164,17 @@ def main():
                 if abs(dino.velocity.x) + abs(dino.velocity.y) > dino.speed:
                     dino.velocity.x /= 1.3
                     dino.velocity.y /= 1.3
+
+                if abs(dino.velocity.x) + abs(dino.velocity.y) > 0.5:
+                    if current_ticks - last_time > animation_fps:
+                        dino.animate()
+                        last_time = current_ticks
+                else:
+                    dino.reset()
+                if left:
+                    dino.currentSprite = dino.leftSprite
+                else:
+                    dino.currentSprite = dino.rightSprite
 
                 for i in range(len(barriers)):
                     if barriers[i][0] < next_x[0] < barriers[i][0] + barriers[i][2] and barriers[i][1] + \
@@ -195,7 +217,6 @@ def main():
                         full_sound.play()
                     elif not touching_trash:
                         miss_sound.play()
-
                 screen.blit(dino.currentSprite, (dino.position.x, dino.position.y))
 
                 pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
@@ -311,13 +332,20 @@ def main():
                     timer_step = timer_width / time_left
                     timer_rect = [540, 562, timer_width, 55]
                     trash_collected = 0
+                    last_time = start_ticks
+                    dino.position.xy = 100, 400
                     trash_text = score_font.render(str(trash_collected), True, score_color)
                     for trash in trash_pieces:
                         trash.__init__()
+                elif check_collision_list(mouse_pos, quit_button):
+                    select_sound.play()
+                    pygame.time.wait(int(select_sound.get_length()*1000))
+                    return
 
-            pygame.draw.rect(screen, (0, 0, 0), (0, 0, screen.get_width(), screen.get_height()))
-            pygame.draw.rect(screen, (13, 219, 67), start_button, 0, 20)
-            screen.blit(start_text, (1000, 500))
+            screen.blit(inside, (0, 0))
+            # pygame.draw.rect(screen, (13, 219, 67), start_button, 0, 20)
+            screen.blit(quit_text, (1050, 363))
+            screen.blit(start_text, (1010, 474))
             pygame.display.update()
 
 
