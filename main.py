@@ -92,7 +92,7 @@ def main():
     trash_pieces = []
 
     for i in range(20):
-        trash_pieces.append(Trash())
+        trash_pieces.append(Trash(screen.get_height()))
 
     # bools for what menu to be in
     shop_open = False
@@ -204,10 +204,10 @@ def main():
                     if trash_collected < backpack:
                         trash_collected += 1
                         trash_text = score_font.render(str(trash_collected), True, score_color)
-                        trash.__init__()
+                        trash.__init__(screen.get_height())
                     touching_trash = True
                 screen.blit(trash.sprite, (trash.position.x, trash.position.y))
-                trash.fall(screen.get_height())
+                trash.fall()
 
             if not shop_open:
                 if interact:
@@ -267,7 +267,6 @@ def main():
                     score_text = score_font.render(str(balance), True, score_color)
                     trash_text = score_font.render(str(trash_collected), True, score_color)
                     shop_open = False
-
             pygame.display.update()
         if trash_collected > 0:
             sell_frame_delay = sell_time * 1000 / sell_frames
@@ -317,7 +316,7 @@ def main():
                     trash_collected = 0
                     trash_text = score_font.render(str(trash_collected), True, score_color)
                     for trash in trash_pieces:
-                        trash.__init__()
+                        trash.__init__(screen.get_height())
 
             if select:
                 mouse_pos = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], 3, 3)
@@ -336,7 +335,7 @@ def main():
                     dino.position.xy = 100, 400
                     trash_text = score_font.render(str(trash_collected), True, score_color)
                     for trash in trash_pieces:
-                        trash.__init__()
+                        trash.__init__(screen.get_height())
                 elif check_collision_list(mouse_pos, quit_button):
                     select_sound.play()
                     pygame.time.wait(int(select_sound.get_length()*1000))
