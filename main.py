@@ -37,7 +37,7 @@ def main():
     trash_text = score_font.render(str(0), True, score_color)
     score_text = score_font.render(str(0), True, score_color)
     backpack_text = score_font.render(str(10), True, score_color)
-    score_holder = pygame.Rect(10, 550, 560, 80)
+    score_holder = pygame.Rect(10, 550, 600, 80)
     barriers = [(0, 0, 320, 200), (100, 200, 70, 130)]
     shop_hitbox = (100, 230, 70, 70)
 
@@ -57,6 +57,8 @@ def main():
     quit_text = upgrades_font.render("Quit", True, (181, 23, 2))
     inside = pygame.image.load("gfx/inside.png")
     inside = pygame.transform.scale(inside, (1280, 640))
+    backpack_button = (435, 255, 100, 55)
+    speed_button = (570, 255, 100, 55)
 
     # Load sound effects
     collect_sound = pygame.mixer.Sound("sfx/pickup.wav")
@@ -83,15 +85,17 @@ def main():
     time_left = total_time
     timer_width = 490
     timer_step = timer_width / time_left
-    timer_rect = [610, 562, timer_width, 55]
+    timer_rect = [650, 562, timer_width, 55]
     timer_color = [0, 255, 0]
+
+    clock = pygame.time.Clock()
 
     # start the player
     dino = Player()
     left = False
 
     last_time = start_ticks
-    animation_fps = 100
+    animation_fps = 80
 
     # create trash pieces
     trash_pieces = []
@@ -229,11 +233,11 @@ def main():
                 screen.blit(trash_text, (80, 567))
                 screen.blit(coin, (200, 560))
                 screen.blit(score_text, (270, 567))
-                screen.blit(backpack_icon, (400, 560))
-                screen.blit(backpack_text, (460, 567))
+                screen.blit(backpack_icon, (450, 560))
+                screen.blit(backpack_text, (510, 567))
 
-                pygame.draw.rect(screen, (38, 24, 24), (600, 550, 560, 80), 0, 10)
-                screen.blit(timer_icon, (1090, 560))
+                pygame.draw.rect(screen, (38, 24, 24), (640, 550, 560, 80), 0, 10)
+                screen.blit(timer_icon, (1130, 560))
                 pygame.draw.rect(screen, timer_color, timer_rect, 0, 10)
 
                 prev_trash = trash_collected
@@ -275,6 +279,8 @@ def main():
                     score_text = score_font.render(str(balance), True, score_color)
                     trash_text = score_font.render(str(trash_collected), True, score_color)
                     shop_open = False
+            clock.tick(60)
+            print(clock.get_fps())
             pygame.display.update()
         if trash_collected > 0:
             sell_frame_delay = sell_time * 1000 / sell_frames
@@ -337,7 +343,7 @@ def main():
                     time_left = total_time
                     timer_width = 490
                     timer_step = timer_width / time_left
-                    timer_rect = [610, 562, timer_width, 55]
+                    timer_rect = [650, 562, timer_width, 55]
                     trash_collected = 0
                     last_time = start_ticks
                     dino.position.xy = 100, 400
@@ -348,11 +354,43 @@ def main():
                     select_sound.play()
                     pygame.time.wait(int(select_sound.get_length()*1000))
                     return
+                elif check_collision_list(mouse_pos, speed_button):
+                    if dino.speed < 10 and balance >= dino.speed * 20:
+                        select_sound.play()
+                        balance -= dino.speed * 20
+                        dino.speed += 1
+                        score_text = score_font.render(str(balance), True, score_color)
+                    else:
+                        full_sound.play()
+                elif check_collision_list(mouse_pos, backpack_button):
+                    if backpack < 30 and balance >= backpack * 3:
+                        select_sound.play()
+                        balance -= backpack * 3
+                        backpack += 5
+                        score_text = score_font.render(str(balance), True, score_color)
+                        backpack_text = score_font.render(str(backpack), True, score_color)
+                    else:
+                        full_sound.play()
 
             screen.blit(inside, (0, 0))
-            # pygame.draw.rect(screen, (13, 219, 67), start_button, 0, 20)
+            # pygame.draw.rect(screen, (13, 219, 67), speed_button, 0, 20)
             screen.blit(quit_text, (1050, 363))
             screen.blit(start_text, (1010, 474))
+
+            # pygame.draw.rect(screen, (13, 219, 67), backpack_button, 0, 20)
+            screen.blit(upgrades_font.render(str(backpack*3), True, score_color), (462, 272))
+            # pygame.draw.rect(screen, (13, 219, 67), speed_button, 0, 20)
+            screen.blit(upgrades_font.render(str((dino.speed * 20)), True, score_color), (595, 272))
+
+            pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
+            screen.blit(trash_pile, (20, 560))
+            screen.blit(trash_text, (80, 567))
+            screen.blit(coin, (200, 560))
+            screen.blit(score_text, (270, 567))
+            screen.blit(backpack_icon, (450, 560))
+            screen.blit(backpack_text, (510, 567))
+
+            clock.tick(10)
             pygame.display.update()
 
 
