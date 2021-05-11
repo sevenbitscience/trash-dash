@@ -20,4 +20,4 @@ class Trash:
         if self.position.y < self.screenheight:
             self.position.y += self.speed
         else:
-            self.__init__()
+            self.__init__(self.screenheight)
