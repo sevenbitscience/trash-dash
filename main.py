@@ -3,6 +3,10 @@ from player import Player
 from trash import Trash
 
 
+# cmd to build to exe:
+# pyinstaller --noconfirm --onedir --windowed --add-data "C:/Users/milau/OneDrive/Documents/Coding/Python/trash-dash/gfx;gfx/" --add-data "C:/Users/milau/OneDrive/Documents/Coding/Python/trash-dash/sfx;sfx/" --add-data "C:/Users/milau/OneDrive/Documents/Coding/Python/trash-dash/Fonts;Fonts/"  "C:/Users/milau/OneDrive/Documents/Coding/Python/trash-dash/main.py"
+
+
 def check_collision(a_x, a_y, a_width, a_height, b_x, b_y, b_width, b_height):
     return (a_x + a_width > b_x) and (a_x < b_x + b_width) and (a_y + a_height > b_y) and (a_y < b_y + b_height)
 
@@ -46,6 +50,7 @@ def main():
     sell_text = sell_font.render("Sell", True, (235, 235, 235))
     sell_button_color = (71, 145, 64)
     sell_button = (383, 445, 542, 80)
+    sell_width = sell_button[2]
     sell_rect = pygame.Rect(sell_button)
 
     # Load assets for inside
@@ -102,6 +107,30 @@ def main():
     # bools for what menu to be in
     shop_open = False
     running = False
+
+    def render():
+        if running:
+            if shop_open:
+                screen.blit(atm, (0, 0))
+                pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
+                pygame.draw.rect(screen, sell_button_color, (sell_button[0], sell_button[1], int(sell_width),
+                                                             sell_button[3]), 0, 10)
+                screen.blit(sell_text, (570, 465))
+            else:
+                screen.blit(dino.currentSprite, (dino.position.x, dino.position.y))
+
+                pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
+                screen.blit(trash_pile, (20, 560))
+                screen.blit(trash_text, (80, 567))
+                screen.blit(coin, (200, 560))
+                screen.blit(score_text, (270, 567))
+                screen.blit(backpack_icon, (400, 560))
+                screen.blit(backpack_text, (460, 567))
+
+                pygame.draw.rect(screen, (38, 24, 24), (600, 550, 560, 80), 0, 10)
+                screen.blit(timer_icon, (1090, 560))
+                pygame.draw.rect(screen, timer_color, timer_rect, 0, 10)
+        pygame.display.update()
 
     # main loop
     while True:
@@ -201,6 +230,14 @@ def main():
             if check_collision(dino.position.x, dino.position.y, 50, 50,
                                shop_hitbox[0], shop_hitbox[1], shop_hitbox[2], shop_hitbox[3]) and interact:
                 shop_open = True
+                sell_frame_delay = sell_time * 1000 / sell_frames
+                sell_width = sell_button[2]
+                if trash_collected > 0:
+                    coin_delay = (sell_frames - 5) / trash_collected
+                    last_coin_frame = 0
+                else:
+                    coin_delay = sell_frames + 1
+                    last_coin_frame = sell_frames + 1
 
             screen.blit(house, (0, 0))
             for trash in trash_pieces:
@@ -222,6 +259,7 @@ def main():
                         full_sound.play()
                     elif not touching_trash:
                         miss_sound.play()
+                '''
                 screen.blit(dino.currentSprite, (dino.position.x, dino.position.y))
 
                 pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
@@ -235,47 +273,30 @@ def main():
                 pygame.draw.rect(screen, (38, 24, 24), (600, 550, 560, 80), 0, 10)
                 screen.blit(timer_icon, (1090, 560))
                 pygame.draw.rect(screen, timer_color, timer_rect, 0, 10)
-
+                '''
                 prev_trash = trash_collected
 
             if shop_open:
-                sell_frame_delay = sell_time * 1000 / sell_frames
-                if trash_collected > 0:
-                    coin_delay = (sell_frames - 5)/trash_collected
-                    last_coin_frame = 0
-                else:
-                    coin_delay = sell_frames + 1
-                    last_coin_frame = sell_frames + 1
-                screen.blit(atm, (0, 0))
-                pygame.draw.rect(screen, sell_button_color, sell_rect, 0, 10)
-                screen.blit(sell_text, (570, 465))
+                render()
                 if check_collision(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], 3, 3, sell_button[0],
                                    sell_button[1], sell_button[2], sell_button[3]) and select:
                     select_sound.play()
                     for i in range(sell_frames):
-                        sell_width = sell_button[2]-i*sell_button[2]/sell_frames
-                        screen.blit(atm, (0, 0))
-                        pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
-                        pygame.draw.rect(screen, sell_button_color, (sell_button[0], sell_button[1], int(sell_width),
-                                                                     sell_button[3]), 0, 10)
-                        screen.blit(sell_text, (570, 465))
+                        sell_width = sell_button[2] - i * sell_button[2] / sell_frames
                         if int(last_coin_frame + coin_delay) == i:
                             coin_sound.play()
                             last_coin_frame = i
-                        pygame.display.update()
+                        render()
                         pygame.time.delay(int(sell_frame_delay))
-
-                    screen.blit(atm, (0, 0))
-                    pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
-                    screen.blit(sell_text, (570, 465))
-                    pygame.display.update()
+                    sell_width = 0
+                    render()
                     pygame.time.delay(500)
                     balance += trash_collected * trash_price
                     trash_collected = 0
                     score_text = score_font.render(str(balance), True, score_color)
                     trash_text = score_font.render(str(trash_collected), True, score_color)
                     shop_open = False
-            pygame.display.update()
+            render()
         if trash_collected > 0:
             sell_frame_delay = sell_time * 1000 / sell_frames
             coin_delay = (sell_frames - 5) / trash_collected
