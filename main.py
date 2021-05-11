@@ -13,7 +13,6 @@ def check_collision_list(a, b):
 
 def main():
     # start pygame
-
     pygame.init()
     screen = pygame.display.set_mode((1280, 640))
     pygame.display.set_caption("Trash dash")
@@ -23,16 +22,22 @@ def main():
     house = pygame.transform.scale(house, (1280, 640))
     atm = pygame.image.load("gfx/atm.png")
     atm = pygame.transform.scale(atm, (1280, 640))
-    trash_pile = pygame.image.load("gfx/soda.png")
     hud_icon_size = 60
+    trash_pile = pygame.image.load("gfx/soda.png")
     trash_pile = pygame.transform.scale(trash_pile, (hud_icon_size, hud_icon_size))
     coin = pygame.image.load("gfx/coin.png")
     coin = pygame.transform.scale(coin, (hud_icon_size, hud_icon_size))
+    timer_icon = pygame.image.load("gfx/hourglass-icon.png")
+    timer_icon = pygame.transform.scale(timer_icon, (hud_icon_size, hud_icon_size))
+    backpack_icon = pygame.image.load("gfx/backpack-icon.png")
+    backpack_icon = pygame.transform.scale(backpack_icon, (hud_icon_size, hud_icon_size))
+
     score_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 50)
     score_color = (191, 69, 69)
     trash_text = score_font.render(str(0), True, score_color)
     score_text = score_font.render(str(0), True, score_color)
-    score_holder = pygame.Rect(10, 550, 500, 80)
+    backpack_text = score_font.render(str(10), True, score_color)
+    score_holder = pygame.Rect(10, 550, 560, 80)
     barriers = [(0, 0, 320, 200), (100, 200, 70, 130)]
     shop_hitbox = (100, 230, 70, 70)
 
@@ -78,7 +83,7 @@ def main():
     time_left = total_time
     timer_width = 490
     timer_step = timer_width / time_left
-    timer_rect = [540, 562, timer_width, 55]
+    timer_rect = [610, 562, timer_width, 55]
     timer_color = [0, 255, 0]
 
     # start the player
@@ -220,12 +225,15 @@ def main():
                 screen.blit(dino.currentSprite, (dino.position.x, dino.position.y))
 
                 pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
-                screen.blit(trash_pile, (20, 558))
-                screen.blit(trash_text, (80, 565))
-                screen.blit(coin, (200, 558))
-                screen.blit(score_text, (280, 565))
+                screen.blit(trash_pile, (20, 560))
+                screen.blit(trash_text, (80, 567))
+                screen.blit(coin, (200, 560))
+                screen.blit(score_text, (270, 567))
+                screen.blit(backpack_icon, (400, 560))
+                screen.blit(backpack_text, (460, 567))
 
-                pygame.draw.rect(screen, (38, 24, 24), (530, 550, 500, 80), 0, 10)
+                pygame.draw.rect(screen, (38, 24, 24), (600, 550, 560, 80), 0, 10)
+                screen.blit(timer_icon, (1090, 560))
                 pygame.draw.rect(screen, timer_color, timer_rect, 0, 10)
 
                 prev_trash = trash_collected
@@ -312,7 +320,7 @@ def main():
                     time_left = total_time
                     timer_width = 490
                     timer_step = timer_width / time_left
-                    timer_rect = [540, 562, timer_width, 55]
+                    timer_rect = [610, 562, timer_width, 55]
                     trash_collected = 0
                     trash_text = score_font.render(str(trash_collected), True, score_color)
                     for trash in trash_pieces:
@@ -329,7 +337,7 @@ def main():
                     time_left = total_time
                     timer_width = 490
                     timer_step = timer_width / time_left
-                    timer_rect = [540, 562, timer_width, 55]
+                    timer_rect = [610, 562, timer_width, 55]
                     trash_collected = 0
                     last_time = start_ticks
                     dino.position.xy = 100, 400
