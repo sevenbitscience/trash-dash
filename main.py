@@ -1,4 +1,5 @@
 import pygame
+import threading
 from player import Player
 from trash import Trash
 
@@ -107,33 +108,45 @@ def main():
     # bools for what menu to be in
     shop_open = False
     running = False
+    playing = True
 
-    def render():
-        if running:
-            if shop_open:
-                screen.blit(atm, (0, 0))
-                pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
-                pygame.draw.rect(screen, sell_button_color, (sell_button[0], sell_button[1], int(sell_width),
-                                                             sell_button[3]), 0, 10)
-                screen.blit(sell_text, (570, 465))
-            else:
-                screen.blit(dino.currentSprite, (dino.position.x, dino.position.y))
+    class Render(threading.Thread):
+        def __init__(self, threadID, name):
+            threading.Thread.__init__(self)
+            self.threadID = threadID
+            self.name = name
 
-                pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
-                screen.blit(trash_pile, (20, 560))
-                screen.blit(trash_text, (80, 567))
-                screen.blit(coin, (200, 560))
-                screen.blit(score_text, (270, 567))
-                screen.blit(backpack_icon, (400, 560))
-                screen.blit(backpack_text, (460, 567))
+        def run(self):
+            while playing:
+                if running:
+                    if shop_open:
+                        screen.blit(atm, (0, 0))
+                        pygame.draw.rect(screen, (50, 50, 50), sell_rect, 0, 10)
+                        pygame.draw.rect(screen, sell_button_color, (sell_button[0], sell_button[1], int(sell_width),
+                                                                     sell_button[3]), 0, 10)
+                        screen.blit(sell_text, (570, 465))
+                    else:
+                        screen.blit(dino.currentSprite, (dino.position.x, dino.position.y))
 
-                pygame.draw.rect(screen, (38, 24, 24), (600, 550, 560, 80), 0, 10)
-                screen.blit(timer_icon, (1090, 560))
-                pygame.draw.rect(screen, timer_color, timer_rect, 0, 10)
-        pygame.display.update()
+                        pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
+                        screen.blit(trash_pile, (20, 560))
+                        screen.blit(trash_text, (80, 567))
+                        screen.blit(coin, (200, 560))
+                        screen.blit(score_text, (270, 567))
+                        screen.blit(backpack_icon, (400, 560))
+                        screen.blit(backpack_text, (460, 567))
+
+                        pygame.draw.rect(screen, (38, 24, 24), (600, 550, 560, 80), 0, 10)
+                        screen.blit(timer_icon, (1090, 560))
+                        pygame.draw.rect(screen, timer_color, timer_rect, 0, 10)
+                pygame.display.update()
+                pygame.time.wait(10)
+
+    thread1 = Render(1, "Thread-1")
+    thread1.start()
 
     # main loop
-    while True:
+    while playing:
         while running:
             collect_sound.set_volume(master_volume)
             miss_sound.set_volume(master_volume/1.5)
@@ -144,7 +157,7 @@ def main():
             seconds = int(((current_ticks - start_ticks) / 1000))
             if last_seconds != seconds:
                 time_left -= seconds - last_seconds
-                print(time_left)
+                # print(time_left)
                 last_seconds = seconds
                 timer_rect[2] = timer_width - (timer_step * (total_time - time_left))
 
@@ -164,6 +177,7 @@ def main():
             pressed = pygame.key.get_pressed()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    playing = False
                     return
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     interact = True
@@ -259,44 +273,30 @@ def main():
                         full_sound.play()
                     elif not touching_trash:
                         miss_sound.play()
-                '''
-                screen.blit(dino.currentSprite, (dino.position.x, dino.position.y))
-
-                pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
-                screen.blit(trash_pile, (20, 560))
-                screen.blit(trash_text, (80, 567))
-                screen.blit(coin, (200, 560))
-                screen.blit(score_text, (270, 567))
-                screen.blit(backpack_icon, (400, 560))
-                screen.blit(backpack_text, (460, 567))
-
-                pygame.draw.rect(screen, (38, 24, 24), (600, 550, 560, 80), 0, 10)
-                screen.blit(timer_icon, (1090, 560))
-                pygame.draw.rect(screen, timer_color, timer_rect, 0, 10)
-                '''
                 prev_trash = trash_collected
 
             if shop_open:
-                render()
+                # render()
                 if check_collision(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], 3, 3, sell_button[0],
                                    sell_button[1], sell_button[2], sell_button[3]) and select:
                     select_sound.play()
-                    for i in range(sell_frames):
-                        sell_width = sell_button[2] - i * sell_button[2] / sell_frames
-                        if int(last_coin_frame + coin_delay) == i:
-                            coin_sound.play()
-                            last_coin_frame = i
-                        render()
-                        pygame.time.delay(int(sell_frame_delay))
-                    sell_width = 0
-                    render()
-                    pygame.time.delay(500)
-                    balance += trash_collected * trash_price
-                    trash_collected = 0
-                    score_text = score_font.render(str(balance), True, score_color)
-                    trash_text = score_font.render(str(trash_collected), True, score_color)
+                    if trash_collected > 0:
+                        for i in range(sell_frames):
+                            sell_width = sell_button[2] - i * sell_button[2] / sell_frames
+                            if int(last_coin_frame + coin_delay) == i:
+                                coin_sound.play()
+                                last_coin_frame = i
+                            # render()
+                            pygame.time.delay(int(sell_frame_delay))
+                        sell_width = 0
+                        # render()
+                        pygame.time.delay(500)
+                        balance += trash_collected * trash_price
+                        trash_collected = 0
+                        score_text = score_font.render(str(balance), True, score_color)
+                        trash_text = score_font.render(str(trash_collected), True, score_color)
                     shop_open = False
-            render()
+            # render()
         if trash_collected > 0:
             sell_frame_delay = sell_time * 1000 / sell_frames
             coin_delay = (sell_frames - 5) / trash_collected
@@ -329,6 +329,7 @@ def main():
             select = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    playing = False
                     return
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     select = True
@@ -368,7 +369,8 @@ def main():
                 elif check_collision_list(mouse_pos, quit_button):
                     select_sound.play()
                     pygame.time.wait(int(select_sound.get_length()*1000))
-                    return
+                    playing = False
+                    break
 
             screen.blit(inside, (0, 0))
             # pygame.draw.rect(screen, (13, 219, 67), start_button, 0, 20)
