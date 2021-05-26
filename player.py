@@ -9,11 +9,16 @@ class Player:
     speed = 2
     # drag = 0.1
     frame = 0
+    costume = 0
     walk = [pygame.image.load("gfx/walking/Dino R1.png"), pygame.image.load("gfx/walking/Dino R2.png"),
             pygame.image.load("gfx/walking/Dino R3.png"), pygame.image.load("gfx/walking/Dino R4.png"),
             pygame.image.load("gfx/walking/Dino R5.png"), pygame.image.load("gfx/walking/Dino R6.png")]
-    standing = pygame.image.load("gfx/dino.png")
-    rightSprite = standing
+    idle = pygame.image.load("gfx/dino.png")
+    duck_walk = [pygame.image.load("gfx/DuckDino/Duck R1.png"), pygame.image.load("gfx/DuckDino/Duck R2.png"),
+                 pygame.image.load("gfx/DuckDino/Duck R3.png"), pygame.image.load("gfx/DuckDino/Duck R4.png"),
+                 pygame.image.load("gfx/DuckDino/Duck R5.png"), pygame.image.load("gfx/DuckDino/Duck R6.png")]
+    duck_idle = pygame.image.load("gfx/DuckDino/Duck Idle.png")
+    rightSprite = idle
     rightSprite = pygame.transform.scale(rightSprite, (60, 60))
     leftSprite = pygame.transform.flip(rightSprite, True, False)
     currentSprite = rightSprite
@@ -21,12 +26,21 @@ class Player:
     def animate(self):
         if self.frame >= len(self.walk):
             self.frame = 0
-        self.rightSprite = self.walk[self.frame]
+
+        if self.costume == 0:
+            self.rightSprite = self.walk[self.frame]
+        elif self.costume == 2:
+            self.rightSprite = self.duck_walk[self.frame]
+
         self.rightSprite = pygame.transform.scale(self.rightSprite, (60, 60))
         self.leftSprite = pygame.transform.flip(self.rightSprite, True, False)
         self.frame += 1
 
     def reset(self):
-        self.rightSprite = self.standing
+        if self.costume == 0:
+            self.rightSprite = self.idle
+        elif self.costume == 2:
+            self.rightSprite = self.duck_idle
+
         self.rightSprite = pygame.transform.scale(self.rightSprite, (60, 60))
         self.leftSprite = pygame.transform.flip(self.rightSprite, True, False)
