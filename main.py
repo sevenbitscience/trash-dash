@@ -17,7 +17,7 @@ def main():
     screen = pygame.display.set_mode((1280, 640))
     pygame.display.set_caption("Trash dash")
 
-    '''title_screen = pygame.image.load("gfx/TitleScreen.png")
+    title_screen = pygame.image.load("gfx/TitleScreen.png")
     title_screen = pygame.transform.scale(title_screen, (1280, 640))
     screen.blit(title_screen, (0, 0))
     pygame.display.update()
@@ -28,7 +28,7 @@ def main():
                 return
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 on_title = False
-'''
+
     # Load assets for outside
     house = pygame.image.load("gfx/house.png")
     house = pygame.transform.scale(house, (1280, 640))
