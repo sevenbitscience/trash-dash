@@ -19,15 +19,6 @@ def main():
 
     title_screen = pygame.image.load("gfx/TitleScreen.png")
     title_screen = pygame.transform.scale(title_screen, (1280, 640))
-    screen.blit(title_screen, (0, 0))
-    pygame.display.update()
-    on_title = True
-    while on_title:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                on_title = False
 
     # Load assets for outside
     house = pygame.image.load("gfx/house.png")
@@ -61,7 +52,7 @@ def main():
     sell_rect = pygame.Rect(sell_button)
 
     # Load assets for inside
-    upgrades_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 20)
+    upgrades_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 18)
     upgrade_text_color = (36, 36, 36)
     start_button = (985, 435, 205, 90)
     start_text = upgrades_font.render("Next day", True, upgrade_text_color)
@@ -69,6 +60,10 @@ def main():
     quit_text = upgrades_font.render("Quit", True, (181, 23, 2))
     inside = pygame.image.load("gfx/inside.png")
     inside = pygame.transform.scale(inside, (1280, 640))
+    winScreen = pygame.image.load("gfx/WinScreen.png")
+    winScreen = pygame.transform.scale(winScreen, (1280, 640))
+    GameWon = False
+    winButton = (825, 255, 100, 55)
     backpack_button = (435, 255, 100, 55)
     speed_button = (570, 255, 100, 55)
     atm_button = (700, 255, 100, 55)
@@ -83,7 +78,7 @@ def main():
     select_sound = pygame.mixer.Sound("sfx/select.wav")
     coin_sound = pygame.mixer.Sound("sfx/coin.wav")
     full_sound = pygame.mixer.Sound("sfx/full.wav")
-    master_volume = 0.5
+    master_volume = 0.3
 
     # Setup vars for in game stuff
     trash_collected = 0
@@ -126,14 +121,26 @@ def main():
     shop_open = False
     running = False
 
+    collect_sound.set_volume(master_volume)
+    miss_sound.set_volume(master_volume / 1.5)
+    select_sound.set_volume(master_volume)
+    full_sound.set_volume(master_volume / 1.5)
+
+    screen.blit(title_screen, (0, 0))
+    pygame.display.update()
+    on_title = True
+    while on_title:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                on_title = False
+                select_sound.play()
+
     # main loop
     while True:
         while running:
-            collect_sound.set_volume(master_volume)
-            miss_sound.set_volume(master_volume/1.5)
-            select_sound.set_volume(master_volume)
-            full_sound.set_volume(master_volume/1.5)
-            pygame.display.set_icon(dino.currentSprite)
+            # pygame.display.set_icon(dino.currentSprite)
             touching_trash = False
             current_ticks = pygame.time.get_ticks()
             seconds = int(((current_ticks - start_ticks) / 1000))
@@ -328,6 +335,7 @@ def main():
             trash_collected = 0
             score_text = score_font.render(str(balance), True, score_color)
             trash_text = score_font.render(str(trash_collected), True, score_color)
+            pygame.display.update()
 
         shop_open = False
 
@@ -399,18 +407,34 @@ def main():
                         balance -= trash_price * 10
                         trash_price += 2
                         score_text = score_font.render(str(balance), True, score_color)
+                    else:
+                        full_sound.play()
                 elif check_collision_list(mouse_pos, costume1):
                     select_sound.play()
                     selected_icon = (94, 71, 13, 13)
                     dino.costume = 0
                     dino.reset()
                     pygame.display.set_icon(dino.rightSprite)
+                elif check_collision_list(mouse_pos, costume2):
+                    full_sound.play()
                 elif check_collision_list(mouse_pos, costume3):
                     select_sound.play()
                     selected_icon = (329, 71, 13, 13)
                     dino.costume = 2
                     dino.reset()
                     pygame.display.set_icon(dino.rightSprite)
+                elif check_collision_list(mouse_pos, winButton):
+                    if GameWon or balance >= 1000:
+                        select_sound.play()
+                        GameWon = True
+                        pygame.time.delay(10)
+                        screen.blit(winScreen, (0, 0))
+                        pygame.display.update()
+                        pygame.time.delay(50)
+                        if not GameWon:
+                            balance -= 1000
+                    else:
+                        full_sound.play()
 
             screen.blit(inside, (0, 0))
             pygame.draw.rect(screen, (13, 219, 67), selected_icon)
@@ -424,7 +448,9 @@ def main():
             screen.blit(upgrades_font.render(str((dino.speed * 20)), True, score_color), (595, 272))
             # pygame.draw.rect(screen, (13, 219, 67), atm_button, 0, 20)
             screen.blit(upgrades_font.render(str((trash_price * 10)), True, score_color), (728, 272))
-
+            # pygame.draw.rect(screen, (13, 219, 67), winButton)
+            if not GameWon:
+                screen.blit(upgrades_font.render(str(1000), True, score_color), (846, 272))
             pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
             screen.blit(trash_pile, (20, 560))
             screen.blit(trash_text, (80, 567))
