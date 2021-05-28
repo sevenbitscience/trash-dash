@@ -18,6 +18,10 @@ class Player:
                  pygame.image.load("gfx/DuckDino/Duck R3.png"), pygame.image.load("gfx/DuckDino/Duck R4.png"),
                  pygame.image.load("gfx/DuckDino/Duck R5.png"), pygame.image.load("gfx/DuckDino/Duck R6.png")]
     duck_idle = pygame.image.load("gfx/DuckDino/Duck Idle.png")
+    robo_walk = [pygame.image.load("gfx/RoboDino/ROBO R1.png"), pygame.image.load("gfx/RoboDino/ROBO R2.png"),
+                 pygame.image.load("gfx/RoboDino/ROBO R3.png"), pygame.image.load("gfx/RoboDino/ROBO R4.png"),
+                 pygame.image.load("gfx/RoboDino/ROBO R5.png"), pygame.image.load("gfx/RoboDino/ROBO R6.png")]
+    robo_idle = pygame.image.load("gfx/RoboDino/Dino Bot Idle.png")
     rightSprite = idle
     rightSprite = pygame.transform.scale(rightSprite, (60, 60))
     leftSprite = pygame.transform.flip(rightSprite, True, False)
@@ -29,6 +33,8 @@ class Player:
 
         if self.costume == 0:
             self.rightSprite = self.walk[self.frame]
+        if self.costume == 1:
+            self.rightSprite = self.robo_walk[self.frame]
         elif self.costume == 2:
             self.rightSprite = self.duck_walk[self.frame]
 
@@ -39,6 +45,8 @@ class Player:
     def reset(self):
         if self.costume == 0:
             self.rightSprite = self.idle
+        if self.costume == 1:
+            self.rightSprite = self.robo_idle
         elif self.costume == 2:
             self.rightSprite = self.duck_idle
 

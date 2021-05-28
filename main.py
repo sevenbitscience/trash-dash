@@ -416,7 +416,11 @@ def main():
                     dino.reset()
                     pygame.display.set_icon(dino.rightSprite)
                 elif check_collision_list(mouse_pos, costume2):
-                    full_sound.play()
+                    select_sound.play()
+                    selected_icon = (215, 71, 13, 13)
+                    dino.costume = 1
+                    dino.reset()
+                    pygame.display.set_icon(dino.rightSprite)
                 elif check_collision_list(mouse_pos, costume3):
                     select_sound.play()
                     selected_icon = (329, 71, 13, 13)
