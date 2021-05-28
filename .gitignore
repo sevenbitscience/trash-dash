@@ -1,7 +1,9 @@
-.idea\
-__pycache__\
+.idea/
+__pycache__/
 *.mbp
 .idea/workspace.xml
+/dist/
+/build/
 /venv/Lib/site-packages/pip/_vendor/packaging/__about__.py
 /venv/Lib/site-packages/pkg_resources/_vendor/packaging/__about__.py
 /venv/Lib/site-packages/setuptools/_vendor/packaging/__about__.py
@@ -939,3 +941,10 @@ __pycache__\
 /venv/Lib/site-packages/pygame/examples/data/yuv_1.pgm
 /venv/Lib/site-packages/pygame/tests/run_tests__tests/all_ok/zero_tests_test.py
 /venv/Lib/site-packages/pygame/zlib1.dll
+/.idea/shelf/Default_Changelist/base_library.zip
+/.idea/shelf/Default_Changelist.xml
+/gfx/dino.ico
+/.idea/shelf/Default_Changelist/main.exe
+/.idea/shelf/Default_Changelist/PKG-00.pkg
+/.idea/shelf/Default_Changelist/PYZ-00.pyz
+/.idea/shelf/Default_Changelist/shelved.patch
