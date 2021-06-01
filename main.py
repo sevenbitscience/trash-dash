@@ -75,7 +75,7 @@ def main():
     costume3 = (299, 263, 71, 38)
 
     fact_font = pygame.font.Font("assets/Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 10)
-    f = open("assets/gfx/facts.txt", "r", encoding="utf8")
+    f = open("assets/facts.txt", "r", encoding="utf8")
     content = f.read()
     facts = content.splitlines()
     f.close()
