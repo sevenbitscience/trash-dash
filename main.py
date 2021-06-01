@@ -1,5 +1,6 @@
 import pygame
 import random
+import webbrowser
 from player import Player
 from trash import Trash
 
@@ -150,16 +151,27 @@ def main():
                 surface.blit(word_t, (x, y))
                 x += word_t.get_width() + 2
 
+    learn_button = (328, 300, 746, 72)
+    begin_button = (328, 191, 746, 72)
     screen.blit(title_screen, (0, 0))
+    # pygame.draw.rect(screen, (0, 0, 0), begin_button)
     pygame.display.update()
     on_title = True
     while on_title:
+        select = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                on_title = False
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                select = True
+        if select:
+            mouse_pos = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], 3, 3)
+            if check_collision_list(mouse_pos, begin_button):
                 select_sound.play()
+                on_title = False
+            if check_collision_list(mouse_pos, learn_button):
+                select_sound.play()
+                webbrowser.open('https://sites.google.com/view/trashdash/learn')
 
     # main loop
     while True:
