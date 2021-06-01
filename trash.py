@@ -3,7 +3,7 @@ import random
 
 
 class Trash:
-    trashSprites = [pygame.image.load("gfx/appleCore.png"), pygame.image.load("gfx/soda.png")]
+    trashSprites = [pygame.image.load("assets/gfx/appleCore.png"), pygame.image.load("assets/gfx/soda.png")]
 
     def __init__(self, screenheight):
         self.screenheight = screenheight

@@ -10,18 +10,24 @@ class Player:
     # drag = 0.1
     frame = 0
     costume = 0
-    walk = [pygame.image.load("gfx/walking/Dino R1.png"), pygame.image.load("gfx/walking/Dino R2.png"),
-            pygame.image.load("gfx/walking/Dino R3.png"), pygame.image.load("gfx/walking/Dino R4.png"),
-            pygame.image.load("gfx/walking/Dino R5.png"), pygame.image.load("gfx/walking/Dino R6.png")]
-    idle = pygame.image.load("gfx/dino.png")
-    duck_walk = [pygame.image.load("gfx/DuckDino/Duck R1.png"), pygame.image.load("gfx/DuckDino/Duck R2.png"),
-                 pygame.image.load("gfx/DuckDino/Duck R3.png"), pygame.image.load("gfx/DuckDino/Duck R4.png"),
-                 pygame.image.load("gfx/DuckDino/Duck R5.png"), pygame.image.load("gfx/DuckDino/Duck R6.png")]
-    duck_idle = pygame.image.load("gfx/DuckDino/Duck Idle.png")
-    robo_walk = [pygame.image.load("gfx/RoboDino/ROBO R1.png"), pygame.image.load("gfx/RoboDino/ROBO R2.png"),
-                 pygame.image.load("gfx/RoboDino/ROBO R3.png"), pygame.image.load("gfx/RoboDino/ROBO R4.png"),
-                 pygame.image.load("gfx/RoboDino/ROBO R5.png"), pygame.image.load("gfx/RoboDino/ROBO R6.png")]
-    robo_idle = pygame.image.load("gfx/RoboDino/Dino Bot Idle.png")
+    walk = [pygame.image.load("assets/gfx/walking/Dino R1.png"), pygame.image.load("assets/gfx/walking/Dino R2.png"),
+            pygame.image.load("assets/gfx/walking/Dino R3.png"), pygame.image.load("assets/gfx/walking/Dino R4.png"),
+            pygame.image.load("assets/gfx/walking/Dino R5.png"), pygame.image.load("assets/gfx/walking/Dino R6.png")]
+    idle = pygame.image.load("assets/gfx/dino.png")
+    duck_walk = [pygame.image.load("assets/gfx/DuckDino/Duck R1.png"), pygame.image.load(
+        "assets/gfx/DuckDino/Duck R2.png"),
+                 pygame.image.load("assets/gfx/DuckDino/Duck R3.png"), pygame.image.load(
+            "assets/gfx/DuckDino/Duck R4.png"),
+                 pygame.image.load("assets/gfx/DuckDino/Duck R5.png"), pygame.image.load(
+            "assets/gfx/DuckDino/Duck R6.png")]
+    duck_idle = pygame.image.load("assets/gfx/DuckDino/Duck Idle.png")
+    robo_walk = [pygame.image.load("assets/gfx/RoboDino/ROBO R1.png"), pygame.image.load(
+        "assets/gfx/RoboDino/ROBO R2.png"),
+                 pygame.image.load("assets/gfx/RoboDino/ROBO R3.png"), pygame.image.load(
+            "assets/gfx/RoboDino/ROBO R4.png"),
+                 pygame.image.load("assets/gfx/RoboDino/ROBO R5.png"), pygame.image.load(
+            "assets/gfx/RoboDino/ROBO R6.png")]
+    robo_idle = pygame.image.load("assets/gfx/RoboDino/Dino Bot Idle.png")
     rightSprite = idle
     rightSprite = pygame.transform.scale(rightSprite, (60, 60))
     leftSprite = pygame.transform.flip(rightSprite, True, False)

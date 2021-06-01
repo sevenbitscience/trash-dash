@@ -19,25 +19,25 @@ def main():
     screen = pygame.display.set_mode((1280, 640))
     pygame.display.set_caption("Trash dash")
 
-    title_screen = pygame.image.load("gfx/TitleScreen.png")
+    title_screen = pygame.image.load("assets/gfx/TitleScreen.png")
     title_screen = pygame.transform.scale(title_screen, (1280, 640))
 
     # Load assets for outside
-    house = pygame.image.load("gfx/house.png")
+    house = pygame.image.load("assets/gfx/house.png")
     house = pygame.transform.scale(house, (1280, 640))
-    atm = pygame.image.load("gfx/atm.png")
+    atm = pygame.image.load("assets/gfx/atm.png")
     atm = pygame.transform.scale(atm, (1280, 640))
     hud_icon_size = 60
-    trash_pile = pygame.image.load("gfx/soda.png")
+    trash_pile = pygame.image.load("assets/gfx/soda.png")
     trash_pile = pygame.transform.scale(trash_pile, (hud_icon_size, hud_icon_size))
-    coin = pygame.image.load("gfx/coin.png")
+    coin = pygame.image.load("assets/gfx/coin.png")
     coin = pygame.transform.scale(coin, (hud_icon_size, hud_icon_size))
-    timer_icon = pygame.image.load("gfx/hourglass-icon.png")
+    timer_icon = pygame.image.load("assets/gfx/hourglass-icon.png")
     timer_icon = pygame.transform.scale(timer_icon, (hud_icon_size, hud_icon_size))
-    backpack_icon = pygame.image.load("gfx/backpack-icon.png")
+    backpack_icon = pygame.image.load("assets/gfx/backpack-icon.png")
     backpack_icon = pygame.transform.scale(backpack_icon, (hud_icon_size, hud_icon_size))
 
-    score_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 50)
+    score_font = pygame.font.Font("assets/Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 50)
     score_color = (191, 69, 69)
     trash_text = score_font.render(str(0), True, score_color)
     score_text = score_font.render(str(0), True, score_color)
@@ -47,22 +47,22 @@ def main():
     shop_hitbox = (100, 230, 70, 70)
 
     # Load assets for the atm
-    sell_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 40)
+    sell_font = pygame.font.Font("assets/Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 40)
     sell_text = sell_font.render("Sell", True, (235, 235, 235))
     sell_button_color = (71, 145, 64)
     sell_button = (383, 445, 542, 80)
     sell_rect = pygame.Rect(sell_button)
 
     # Load assets for inside
-    upgrades_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 18)
+    upgrades_font = pygame.font.Font("assets/Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 18)
     upgrade_text_color = (36, 36, 36)
     start_button = (985, 435, 205, 90)
     start_text = upgrades_font.render("Next day", True, upgrade_text_color)
     quit_button = (985, 320, 205, 90)
     quit_text = upgrades_font.render("Quit", True, (181, 23, 2))
-    inside = pygame.image.load("gfx/inside.png")
+    inside = pygame.image.load("assets/gfx/inside.png")
     inside = pygame.transform.scale(inside, (1280, 640))
-    winScreen = pygame.image.load("gfx/WinScreen.png")
+    winScreen = pygame.image.load("assets/gfx/WinScreen.png")
     winScreen = pygame.transform.scale(winScreen, (1280, 640))
     GameWon = False
     winButton = (825, 255, 100, 55)
@@ -74,19 +74,19 @@ def main():
     costume2 = (185, 263, 71, 38)
     costume3 = (299, 263, 71, 38)
 
-    fact_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 10)
-    f = open("gfx/facts.txt", "r", encoding="utf8")
+    fact_font = pygame.font.Font("assets/Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 10)
+    f = open("assets/gfx/facts.txt", "r", encoding="utf8")
     content = f.read()
     facts = content.splitlines()
     f.close()
     fact = facts[random.randrange(len(facts))]
 
     # Load sound effects
-    collect_sound = pygame.mixer.Sound("sfx/pickup.wav")
-    miss_sound = pygame.mixer.Sound("sfx/miss.wav")
-    select_sound = pygame.mixer.Sound("sfx/select.wav")
-    coin_sound = pygame.mixer.Sound("sfx/coin.wav")
-    full_sound = pygame.mixer.Sound("sfx/full.wav")
+    collect_sound = pygame.mixer.Sound("assets/sfx/pickup.wav")
+    miss_sound = pygame.mixer.Sound("assets/sfx/miss.wav")
+    select_sound = pygame.mixer.Sound("assets/sfx/select.wav")
+    coin_sound = pygame.mixer.Sound("assets/sfx/coin.wav")
+    full_sound = pygame.mixer.Sound("assets/sfx/full.wav")
     master_volume = 0.3
 
     # Setup vars for in game stuff
