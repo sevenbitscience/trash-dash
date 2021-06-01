@@ -1,4 +1,5 @@
 import pygame
+import random
 from player import Player
 from trash import Trash
 
@@ -72,6 +73,13 @@ def main():
     costume2 = (185, 263, 71, 38)
     costume3 = (299, 263, 71, 38)
 
+    fact_font = pygame.font.Font("Fonts/Press_Start_2P/PressStart2P-Regular.ttf", 10)
+    f = open("gfx/facts.txt", "r", encoding="utf8")
+    content = f.read()
+    facts = content.splitlines()
+    f.close()
+    fact = facts[random.randrange(len(facts))]
+
     # Load sound effects
     collect_sound = pygame.mixer.Sound("sfx/pickup.wav")
     miss_sound = pygame.mixer.Sound("sfx/miss.wav")
@@ -125,6 +133,22 @@ def main():
     miss_sound.set_volume(master_volume / 1.5)
     select_sound.set_volume(master_volume)
     full_sound.set_volume(master_volume / 1.5)
+
+    def box_text(surface, font, x_start, x_end, y_start, text, colour):
+        x = x_start
+        y = y_start
+        words = text.split(' ')
+
+        for word in words:
+            word_t = font.render(word+' ', True, colour)
+            if word_t.get_width() + x <= x_end:
+                surface.blit(word_t, (x, y))
+                x += word_t.get_width() + 2
+            else:
+                y += word_t.get_height() + 4
+                x = x_start
+                surface.blit(word_t, (x, y))
+                x += word_t.get_width() + 2
 
     screen.blit(title_screen, (0, 0))
     pygame.display.update()
@@ -338,6 +362,7 @@ def main():
             pygame.display.update()
 
         shop_open = False
+        fact = facts[random.randrange(len(facts))]
 
         while not running:
             select_sound.set_volume(master_volume)
@@ -350,36 +375,14 @@ def main():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                     select_sound.play()
                     running = True
-                    start_ticks = pygame.time.get_ticks()
-                    last_seconds = -1
-                    total_time = 40
-                    time_left = total_time
-                    timer_width = 490
-                    timer_step = timer_width / time_left
-                    timer_rect = [610, 562, timer_width, 55]
-                    trash_collected = 0
-                    trash_text = score_font.render(str(trash_collected), True, score_color)
-                    for trash in trash_pieces:
-                        trash.__init__(screen.get_height())
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+                    fact = facts[random.randrange(len(facts))]
 
             if select:
                 mouse_pos = (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], 3, 3)
                 if check_collision_list(mouse_pos, start_button):
                     select_sound.play()
                     running = True
-                    start_ticks = pygame.time.get_ticks()
-                    last_seconds = -1
-                    total_time = 40
-                    time_left = total_time
-                    timer_width = 490
-                    timer_step = timer_width / time_left
-                    timer_rect = [650, 562, timer_width, 55]
-                    trash_collected = 0
-                    last_time = start_ticks
-                    dino.position.xy = 100, 400
-                    trash_text = score_font.render(str(trash_collected), True, score_color)
-                    for trash in trash_pieces:
-                        trash.__init__(screen.get_height())
                 elif check_collision_list(mouse_pos, quit_button):
                     select_sound.play()
                     pygame.time.wait(int(select_sound.get_length()*1000))
@@ -455,6 +458,7 @@ def main():
             # pygame.draw.rect(screen, (13, 219, 67), winButton)
             if not GameWon:
                 screen.blit(upgrades_font.render(str(1000), True, score_color), (846, 272))
+            box_text(screen, fact_font, 1000, 1190, 90, fact, score_color)
             pygame.draw.rect(screen, (38, 24, 24), score_holder, 0, 10)
             screen.blit(trash_pile, (20, 560))
             screen.blit(trash_text, (80, 567))
@@ -465,6 +469,20 @@ def main():
 
             clock.tick(10)
             pygame.display.update()
+
+        start_ticks = pygame.time.get_ticks()
+        last_seconds = -1
+        total_time = 40
+        time_left = total_time
+        timer_width = 490
+        timer_step = timer_width / time_left
+        timer_rect = [650, 562, timer_width, 55]
+        trash_collected = 0
+        last_time = start_ticks
+        dino.position.xy = 100, 400
+        trash_text = score_font.render(str(trash_collected), True, score_color)
+        for trash in trash_pieces:
+            trash.__init__(screen.get_height())
 
 
 if __name__ == "__main__":
