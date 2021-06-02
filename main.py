@@ -102,7 +102,7 @@ def main():
     # Setup timer
     start_ticks = pygame.time.get_ticks()
     last_seconds = -1
-    total_time = 40
+    total_time = 60
     time_left = total_time
     timer_width = 490
     timer_step = timer_width / time_left
@@ -171,7 +171,7 @@ def main():
                 on_title = False
             if check_collision_list(mouse_pos, learn_button):
                 select_sound.play()
-                webbrowser.open('https://sites.google.com/view/trashdash/learn')
+                webbrowser.open('https://trashdash.sevenbitscience.com/learn')
 
     # main loop
     while True:
@@ -484,7 +484,7 @@ def main():
 
         start_ticks = pygame.time.get_ticks()
         last_seconds = -1
-        total_time = 40
+        total_time = 60
         time_left = total_time
         timer_width = 490
         timer_step = timer_width / time_left
