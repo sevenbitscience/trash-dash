@@ -157,6 +157,7 @@ def main():
     # pygame.draw.rect(screen, (0, 0, 0), begin_button)
     pygame.display.update()
     on_title = True
+
     while on_title:
         select = False
         for event in pygame.event.get():
@@ -217,17 +218,17 @@ def main():
                     running = False
 
             if not shop_open:
-                if pressed[pygame.K_a]:
+                if pressed[pygame.K_LEFT]:
                     dino.velocity.x = -dino.speed
                     dino.currentSprite = dino.leftSprite
                     left = True
-                if pressed[pygame.K_d]:
+                if pressed[pygame.K_RIGHT]:
                     dino.velocity.x = dino.speed
                     dino.currentSprite = dino.rightSprite
                     left = False
-                if pressed[pygame.K_w]:
+                if pressed[pygame.K_UP]:
                     dino.velocity.y = -dino.speed
-                if pressed[pygame.K_s]:
+                if pressed[pygame.K_DOWN]:
                     dino.velocity.y = dino.speed
 
                 next_x = ((dino.position.x + 54) + dino.velocity.x, (dino.position.x + 6) + dino.velocity.x)
@@ -329,6 +330,7 @@ def main():
                         if int(last_coin_frame + coin_delay) == i:
                             coin_sound.play()
                             last_coin_frame = i
+                        clock.tick(60)
                         pygame.display.update()
                         pygame.time.delay(int(sell_frame_delay))
 
@@ -360,6 +362,7 @@ def main():
                 if int(last_coin_frame + coin_delay) == i:
                     coin_sound.play()
                     last_coin_frame = i
+                clock.tick(60)
                 pygame.display.update()
                 pygame.time.delay(int(sell_frame_delay))
             screen.blit(atm, (0, 0))
